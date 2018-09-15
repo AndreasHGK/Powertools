@@ -6,7 +6,7 @@ You need the first permission to use powertools and the second one to assign/una
 
 Powertools work a little different in this plugin than they do in java edition. You assign commands to **SPECIFIC** items and not the id. This way you can share powertools to people to other people (that might only have the permission to run powertools).
 
-##API
+## API
 If, for instance, you want to make this plugin compatible with your plugin (maybe a kit plugin or something) you can do that by making sure you use Powertools with `use AndreasHGK\Powertools\Powertools;` and then call it by doing this:
 
 ```php
