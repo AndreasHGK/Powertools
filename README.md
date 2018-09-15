@@ -1,6 +1,9 @@
 # Powertools
 Assign commands to specific items
 
+[![](https://poggit.pmmp.io/shield.state/Powertools)](https://poggit.pmmp.io/p/Powertools)
+[![](https://poggit.pmmp.io/shield.api/Powertools)](https://poggit.pmmp.io/p/Powertools)
+
 There are 2 base permissions: `powertools.use` and `powertools.command`.
 You need the first permission to use powertools and the second one to assign/unassign powertools. It's that simple!
 
