@@ -1,0 +1,27 @@
+name: Powertools
+main: AndreasHGK\Powertools\Powertools
+version: 1.0.0-PRE
+api: 3.0.0
+load: POSTWORLD
+author: AndreasHGK
+description: Assign commands to items
+
+
+commands:
+ powertool:
+  description: "Assign commands to items"
+  usage: "/powertool {command}"
+  permission: powertool.command
+  aliases: ["pt"]
+
+permissions:
+ powertool:
+  default: true
+  description: "Powertools root permission"
+  children:
+   powertool.command:
+    default: op
+    description: "Enables the use of /powertool"
+   powertool.use:
+    default: op
+    description: "Allows a player to use a powertool"
