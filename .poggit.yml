@@ -4,4 +4,5 @@ branches:
 projects:
   Powertools:
     path: ""
+    icon: "icon.png"
 ...
