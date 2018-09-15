@@ -21,7 +21,7 @@ $pt = Powertools::getInstance();
 *
 * @return item $item
 */
-$pt->enablePowertool($item, $command)
+$pt->enablePowertool($item, $command);
 ```
 
 If the item is an existing item, be sure to also add a `$sender->getInventory()->setItemInHand($item)`
