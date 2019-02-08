@@ -20,14 +20,16 @@ class Powertools extends PluginBase implements Listener{
     public $cooldown = [];
     public $counter = [];
 
+    public static $instance;
+
     /** @var Config */
     public $messages;
 
     /**
      * @return Powertools $Powertools
      */
-    public function getInstance(){
-        return $this;
+    public static function getInstance(){
+        return self::$instance;
     }
 
     /**
@@ -85,7 +87,7 @@ class Powertools extends PluginBase implements Listener{
 
     public function onEnable() : void{
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-
+        self::$instance = $this;
     }
 
     public function onLoad(){
