@@ -17,6 +17,7 @@ use pocketmine\utils\TextFormat;
 class Powertools extends PluginBase implements Listener{
 
     public $cooldown = [];
+    public $counter = [];
 
     /**
      * @return Powertools $Powertools
@@ -90,13 +91,21 @@ class Powertools extends PluginBase implements Listener{
             if (isset($this->cooldown[$player->getName()]) && $this->cooldown[$player->getName()] > microtime(true)) {
                 $event->setCancelled();
                 return;
+            }elseif(isset($this->cooldown[$player->getName()]) && $this->cooldown[$player->getName()] + 0.5 > microtime(true)){
+                if(isset($this->counter[$player->getName()])){
+                    $this->counter[$player->getName()]++;
+                }else{
+                    $this->counter[$player->getName()] = 1;
+                }
+            }else{
+                $this->counter[$player->getName()] = 1;
             }
 
             $item = $player->getInventory()->getItemInHand();
-            if ($this->isPowertool($item) && !in_array($player, $this->cooldown)) {
+            if ($this->isPowertool($item)) {
                 $this->getServer()->dispatchCommand($player, $this->checkCommand($item));
-                $player->addActionBarMessage(TextFormat::colorize("&e&lPT: &r&7command executed"));
-                $this->cooldown[$player->getName()] = microtime(true) + 1;
+                $player->addActionBarMessage(TextFormat::colorize("&e&lPT: &r&7command executed &8x".$this->counter[$player->getName()]));
+                $this->cooldown[$player->getName()] = microtime(true) + 0.05;
                 $event->setCancelled();
             }
         }
@@ -124,13 +133,13 @@ class Powertools extends PluginBase implements Listener{
 			    if(!isset($args[0]) && $this->isPowertool($item)){
                     $disabledItem = $this->disablePowertool($item);
                     $sender->getInventory()->setItemInHand($disabledItem);
-                    $sender->sendMessage(TextFormat::colorize("&e&lPowertool: &r&7unset this powertool"));
+                    $sender->sendMessage(TextFormat::colorize("&e&lPT: &r&7unset this powertool"));
                     return true;
                     break;
                 }elseif(isset($args[0]) && !$this->isPowertool($item)){
 			        $powertool = $this->enablePowertool($item, implode(" ", $args));
                     $sender->getInventory()->setItemInHand($powertool);
-                    $sender->sendMessage(TextFormat::colorize("&e&lPowertool: &r&7set command for this item to: &8").implode(" ", $args));
+                    $sender->sendMessage(TextFormat::colorize("&e&lPT: &r&7set command for this item to: &8").implode(" ", $args));
                 }elseif($this->isPowertool($item)){
                     $sender->sendMessage(TextFormat::colorize("&c&lError: &r&7this already is a powertool"));
                 }else{
