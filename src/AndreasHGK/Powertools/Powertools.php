@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AndreasHGK\Powertools;
 
-use AndreasHGK\Powertools\ExecuteCooldown;
 use pocketmine\plugin\PluginBase;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
@@ -27,9 +26,9 @@ class Powertools extends PluginBase implements Listener{
     }
 
     /**
-     * @return int $version
+     * @return string $version
      */
-    public function getVersion() : int{
+    public function getVersion() : string{
         return $this->getDescription()->getVersion();
     }
 
@@ -79,38 +78,25 @@ class Powertools extends PluginBase implements Listener{
         return $nbt->getString("powertool");
     }
 
-    /**
-     * @param player $player
-     */
-    public function setPowertoolCooldown(Player $player) : void{
-
-        #set a cooldown for a player
-        $task = new ExecuteCooldown($this);
-        $handler = $this->getScheduler()->scheduleRepeatingTask($task, 1);
-        $task->setHandler($handler);
-        $this->cooldown[$task->getTaskId()] = $player;
-    }
-
     public function onEnable() : void{
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
 
     }
 
-    public function removeTask($id) : void{
-
-        #remove the cooldown
-        unset($this->cooldown[$id]);
-        $this->getScheduler()->cancelTask($id);
-    }
-
     public function onInteract(PlayerInteractEvent $event) : void{
         $player = $event->getPlayer();
         if ($player->hasPermission("powertools.use")) {
+
+            if (isset($this->cooldown[$player->getName()]) && $this->cooldown[$player->getName()] > microtime(true)) {
+                $event->setCancelled();
+                return;
+            }
+
             $item = $player->getInventory()->getItemInHand();
             if ($this->isPowertool($item) && !in_array($player, $this->cooldown)) {
                 $this->getServer()->dispatchCommand($player, $this->checkCommand($item));
-                $player->sendMessage(TextFormat::colorize("&e&lPowertool: &r&7command executed"));
-                $this->setPowertoolCooldown($player);
+                $player->addActionBarMessage(TextFormat::colorize("&e&lPT: &r&7command executed"));
+                $this->cooldown[$player->getName()] = microtime(true) + 1;
                 $event->setCancelled();
             }
         }
