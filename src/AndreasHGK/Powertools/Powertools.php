@@ -12,12 +12,16 @@ use pocketmine\nbt\tag\StringTag;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\Listener;
 use pocketmine\Player;
+use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
 class Powertools extends PluginBase implements Listener{
 
     public $cooldown = [];
     public $counter = [];
+
+    /** @var Config */
+    public $messages;
 
     /**
      * @return Powertools $Powertools
@@ -84,6 +88,13 @@ class Powertools extends PluginBase implements Listener{
 
     }
 
+    public function onLoad(){
+        @mkdir($this->getDataFolder());
+        $this->saveDefaultConfig();
+        $this->saveResource("messages.yml");
+        $this->messages = new Config($this->getDataFolder()."messages.yml",Config::YAML);;
+    }
+
     public function onInteract(PlayerInteractEvent $event) : void{
         $player = $event->getPlayer();
         if ($player->hasPermission("powertools.use")) {
@@ -104,7 +115,8 @@ class Powertools extends PluginBase implements Listener{
             $item = $player->getInventory()->getItemInHand();
             if ($this->isPowertool($item)) {
                 $this->getServer()->dispatchCommand($player, $this->checkCommand($item));
-                $player->addActionBarMessage(TextFormat::colorize("&e&lPT: &r&7command executed &8x".$this->counter[$player->getName()]));
+                $str = str_replace("{COUNT}", $this->counter[$player->getName()], $this->messages->get("pt.use"));
+                $player->addActionBarMessage(TextFormat::colorize($str));
                 $this->cooldown[$player->getName()] = microtime(true) + 0.05;
                 $event->setCancelled();
             }
@@ -123,7 +135,7 @@ class Powertools extends PluginBase implements Listener{
 			case "powertool":
 
 			    if(!$sender->hasPermission("powertools.command")) {
-                    $sender->sendMessage(TextFormat::colorize("&c&lError: &r&7you don't have permission to create/remove powertools"));
+                    $sender->sendMessage(TextFormat::colorize($this->messages->get("error.permission")));
                     return true;
                     break;
                 }
@@ -133,17 +145,18 @@ class Powertools extends PluginBase implements Listener{
 			    if(!isset($args[0]) && $this->isPowertool($item)){
                     $disabledItem = $this->disablePowertool($item);
                     $sender->getInventory()->setItemInHand($disabledItem);
-                    $sender->sendMessage(TextFormat::colorize("&e&lPT: &r&7unset this powertool"));
+                    $sender->sendMessage(TextFormat::colorize($this->messages->get("pt.unset")));
                     return true;
                     break;
                 }elseif(isset($args[0]) && !$this->isPowertool($item)){
 			        $powertool = $this->enablePowertool($item, implode(" ", $args));
                     $sender->getInventory()->setItemInHand($powertool);
-                    $sender->sendMessage(TextFormat::colorize("&e&lPT: &r&7set command for this item to: &8").implode(" ", $args));
+                    $str = str_replace("{CMD}", implode(" ", $args), $this->messages->get("pt.set"));
+                    $sender->sendMessage(TextFormat::colorize($str));
                 }elseif($this->isPowertool($item)){
-                    $sender->sendMessage(TextFormat::colorize("&c&lError: &r&7this already is a powertool"));
+                    $sender->sendMessage(TextFormat::colorize($this->messages->get("error.override")));
                 }else{
-                    $sender->sendMessage(TextFormat::colorize("&c&lError: &r&7you need to enter a command to assign"));
+                    $sender->sendMessage(TextFormat::colorize($this->messages->get("error.argument")));
                 }
 
 

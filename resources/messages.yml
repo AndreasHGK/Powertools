@@ -1,0 +1,13 @@
+
+# Messages in powertools
+# {COUNT} var can be used in pt.execute and {CMD} in pt.command and NOWHERE else!
+
+pt.set: "&e&lPT: &r&7set command for this item to: &8{CMD}"
+pt.unset: "&e&lPT: &r&7unset this powertool"
+
+#this is a popup
+pt.use: "&e&lPT: &r&7command executed &8x{COUNT}"
+
+error.override: "&c&lError: &r&7this already is a powertool"
+error.argument: "&c&lError: &r&7you need to enter a command to assign"
+error.permission: "&c&lError: &r&7you don't have permission to create/remove powertools"

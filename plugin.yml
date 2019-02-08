@@ -1,6 +1,6 @@
 name: Powertools
 main: AndreasHGK\Powertools\Powertools
-version: 1.0.0-PRE
+version: 1.0.0
 api: 3.0.0
 load: POSTWORLD
 author: AndreasHGK
